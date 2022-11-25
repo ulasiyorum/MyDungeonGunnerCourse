@@ -18,6 +18,8 @@ public class RoomNodeSO : ScriptableObject
 #if UNITY_EDITOR
 
     [HideInInspector] public Rect rect;
+    [HideInInspector] public bool isLeftClickDragging = false;
+    [HideInInspector] public bool isSelected = false;
 
     public void Init(Rect rect, RoomNodeGraphSO nodeGraph, RoomNodeTypeSO roomNodeType)
     {
@@ -62,8 +64,75 @@ public class RoomNodeSO : ScriptableObject
         return roomArray;
     }
 
+    public void ProcessEvents(Event current)
+    {
+        switch (current.type)
+        {
+            case EventType.MouseDown:
+                ProcessMouseDownEvent(current);
+                break;
 
+            case EventType.MouseUp:
+                ProcessMouseUpEvent(current);
+                break;
+            case EventType.MouseDrag:
+                ProcessMouseDragEvent(current);
+                break;
+            default:
+                break;
+        }
+    }
 
+    private void ProcessMouseDownEvent(Event current)
+    {
+        if(current.button == 0)
+        {
+            ProcessLeftClickDownEvent();
+        }
+    }
+
+    private void ProcessLeftClickDownEvent()
+    {
+        Selection.activeObject = this;
+        
+        isSelected = !isSelected;
+    }
+
+    private void ProcessMouseUpEvent(Event current)
+    {
+        if(current.button == 0)
+        {
+            ProcessLeftClickUpEvent();
+        }
+    }
+
+    private void ProcessLeftClickUpEvent()
+    {
+        if (isLeftClickDragging)
+            isLeftClickDragging = false;
+    }
+
+    private void ProcessMouseDragEvent(Event current)
+    {
+        if(current.button == 0)
+        {
+            ProcessLeftMouseDragEvent(current);
+        }
+    }
+
+    private void ProcessLeftMouseDragEvent(Event current)
+    {
+        isLeftClickDragging = true;
+
+        DragNode(current.delta);
+        GUI.changed = true;
+    }
+
+    private void DragNode(Vector2 delta)
+    {
+        rect.position += delta;
+        EditorUtility.SetDirty(this);
+    }
 #endif
 
 #endregion EditorCode
