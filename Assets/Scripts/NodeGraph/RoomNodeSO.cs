@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class RoomNodeSO : ScriptableObject
@@ -50,6 +51,27 @@ public class RoomNodeSO : ScriptableObject
             int selection = EditorGUILayout.Popup("", selected, GetRoomNodeTypesToDisplay());
 
             roomNodeType = roomNodeTypeList.list[selection];
+
+            if (roomNodeTypeList.list[selected].isCorridor && !roomNodeTypeList.list[selection].isCorridor
+                || !roomNodeTypeList.list[selected].isCorridor && roomNodeTypeList.list[selection].isCorridor
+                || !roomNodeTypeList.list[selected].isBosRoom && roomNodeTypeList.list[selection].isBosRoom)
+            {
+                if (childRoomNodeIDList.Count > 0)
+                {
+                    for (int i = childRoomNodeIDList.Count - 1; i >= 0; i--)
+                    {
+                        RoomNodeSO child = roomNodeGraph.GetRoomNode(childRoomNodeIDList[i]);
+
+                        if (child != null)
+                        {
+                            RemoveChildIDFromRoomNode(child.id);
+
+                            child.RemoveParentIDFromRoomNode(id);
+                        }
+                    }
+                }
+            }
+
         }
 
         if (EditorGUI.EndChangeCheck())
