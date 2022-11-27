@@ -167,7 +167,7 @@ public class RoomNodeSO : ScriptableObject
         GUI.changed = true;
     }
 
-    private void DragNode(Vector2 delta)
+    public void DragNode(Vector2 delta)
     {
         rect.position += delta;
         EditorUtility.SetDirty(this);
