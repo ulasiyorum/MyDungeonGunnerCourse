@@ -193,7 +193,7 @@ public class RoomNodeSO : ScriptableObject
         if (roomNode.roomNodeType.isCorridor && roomNodeType.isCorridor)
             return false;
 
-        if (roomNode.roomNodeType.isCorridor && !roomNodeType.isCorridor)
+        if (!roomNode.roomNodeType.isCorridor && !roomNodeType.isCorridor)
             return false;
 
         if (roomNode.roomNodeType.isCorridor && childRoomNodeIDList.Count >= Settings.maxChildCorridors)
@@ -213,6 +213,26 @@ public class RoomNodeSO : ScriptableObject
     {
         parentRoomNodeIDList.Add(parentID);
         return true;
+    }
+
+    public bool RemoveChildIDFromRoomNode(string ID)
+    {
+        if (childRoomNodeIDList.Contains(ID))
+        {
+            childRoomNodeIDList.Remove(ID);
+            return true;
+        }
+        return false;
+    }
+
+    public bool RemoveParentIDFromRoomNode(string ID)
+    {
+        if (parentRoomNodeIDList.Contains(ID))
+        {
+            parentRoomNodeIDList.Remove(ID);
+            return true;
+        }
+        return false;
     }
 #endif
 
